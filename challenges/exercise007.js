@@ -2,8 +2,13 @@
  * This function takes a number, e.g. 123 and returns the sum of all its digits, e.g 6 in this example.
  * @param {Number} n
  */
-const sumDigits = n => {
+
+const sumDigits = (n) => {
   if (n === undefined) throw new Error("n is required");
+
+  arrayOfn = n.toString().split("");
+  result = arrayOfn.reduce((acc, cur) => acc + Number(cur), 0);
+  return result;
 };
 
 /**
@@ -14,9 +19,15 @@ const sumDigits = n => {
  * @param {Number} end
  * @param {Number} step
  */
-const createRange = (start, end, step) => {
+const createRange = (start, end, step = 1) => {
   if (start === undefined) throw new Error("start is required");
   if (end === undefined) throw new Error("end is required");
+  arrayLength = (end - start) / step;
+  const result = [];
+  for (i = 0; i <= arrayLength; i++)
+    i != 0 ? (result[i] = result[i - 1] + step) : (result[i] = start);
+
+  return result;
 };
 
 /**
@@ -51,7 +62,30 @@ const createRange = (start, end, step) => {
 const getScreentimeAlertList = (users, date) => {
   if (users === undefined) throw new Error("users is required");
   if (date === undefined) throw new Error("date is required");
+  let usageArr = [];
+  let userDetail = {};
+
+  //converting the mutidimensional array of ojects into 2 dimensional like
+  //[ {user: 'beth_1234', date: '2019-05-01', screentime: 76 } ,
+  //{ user: 'beth_1234', date: '2019-05-04', screentime: 127
+  //]
+  users.forEach((user, i) => {
+    user.screenTime.forEach((usageTime, j) => {
+      userDetail = {};
+      userDetail.user = user.username;
+      userDetail.date = usageTime.date;
+      userDetail.screentime = Object.values(usageTime.usage).reduce(
+        (acc, curr) => acc + curr,
+        0
+      );
+      usageArr.push(userDetail);
+    });
+  });
+
+  return usageArr.filter((x) => x.date === date && x.screentime > 100);
 };
+
+getScreentimeAlertList(users, "2019-06-11");
 
 /**
  * This function will receive a hexadecimal color code in the format #FF1133. A hexadecimal code is a number written in hexadecimal notation, i.e. base 16. If you want to know more about hexadecimal notation:
@@ -63,12 +97,17 @@ const getScreentimeAlertList = (users, date) => {
  * Hint: You will need to convert each hexadecimal value for R, G and B into its decimal equivalent!
  * @param {String} str
  */
-const hexToRGB = hexStr => {
+const hexToRGB = (hexStr) => {
   if (hexStr === undefined) throw new Error("hexStr is required");
+
+  redDecimalColor = parseInt(hexStr.substr(1, 2), 16);
+  greenDecimalColor = parseInt(hexStr.substr(3, 2), 16);
+  blueDecimalColor = parseInt(hexStr.substr(5, 2), 16);
+  return `RGB(${redDecimalColor},${greenDecimalColor},${blueDecimalColor})`;
 };
 
 /**
- * This function takes a noughts and crosses board represented as an array, where an empty space is represented with null.
+ * This function takes a  and crosses board represented as an array, where an empty space is represented with null.
  * [
  *  ["X", "0", null],
  *  ["X", null, "0"],
@@ -77,8 +116,39 @@ const hexToRGB = hexStr => {
  * The function should return "X" if player X has won, "0" if the player 0 has won, and null if there is currently no winner.
  * @param {Array} board
  */
-const findWinner = board => {
+const findWinner = (board) => {
   if (board === undefined) throw new Error("board is required");
+
+  winCondition = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  let simpleBoard = [];
+  let position = 0;
+  for (let i = 0; i < board.length; i++)
+    for (let j = 0; j < board.length; j++) {
+      console.log("position", position);
+      simpleBoard[position] = board[i][j];
+      position++;
+    }
+
+  for (let i = 0; i < winCondition.length; i++) {
+    const [pos1, pos2, pos3] = winCondition[i];
+    if (
+      simpleBoard[pos1] &&
+      simpleBoard[pos1] === simpleBoard[pos2] &&
+      simpleBoard[pos2] === simpleBoard[pos3]
+    )
+      return simpleBoard[pos1];
+  }
+  return null;
 };
 
 module.exports = {
@@ -86,5 +156,5 @@ module.exports = {
   createRange,
   getScreentimeAlertList,
   hexToRGB,
-  findWinner
+  findWinner,
 };

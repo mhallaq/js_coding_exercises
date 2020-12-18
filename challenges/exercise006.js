@@ -4,8 +4,11 @@
  * @param {Array} arr
  * @returns {Number}
  */
-const sumMultiples = arr => {
+const sumMultiples = (arr) => {
   if (arr === undefined) throw new Error("arr is required");
+  return arr
+    .filter((num) => num % 3 === 0 || num % 5 === 0)
+    .reduce((acc, curr) => acc + curr, 0);
 };
 
 /**
@@ -13,8 +16,12 @@ const sumMultiples = arr => {
  * @param {String} str
  * @returns {Boolean}
  */
-const isValidDNA = str => {
+const isValidDNA = (str) => {
   if (str === undefined) throw new Error("str is required");
+  const DNACharacters = /[^CGTA]/g;
+  const result = str.match(DNACharacters);
+  let booleanResult = !Array.isArray(result) ? true : false;
+  return booleanResult;
 };
 
 /**
@@ -22,8 +29,18 @@ const isValidDNA = str => {
  * @param {String} str
  * @returns {String}
  */
-const getComplementaryDNA = str => {
+const getComplementaryDNA = (str) => {
   if (str === undefined) throw new Error("str is required");
+  if (isValidDNA(str) === false) return "This is not a valid DNA";
+  str = str
+    .replace(/T/g, "Q")
+    .replace(/A/g, "T")
+    .replace(/Q/g, "A")
+    .replace(/C/g, "W")
+    .replace(/G/g, "C")
+    .replace(/W/g, "G");
+
+  return str;
 };
 
 /**
@@ -31,8 +48,15 @@ const getComplementaryDNA = str => {
  * @param {Number} n
  * @returns {Boolean}
  */
-const isItPrime = n => {
+const isItPrime = (n) => {
   if (n === undefined) throw new Error("n is required");
+  for (let i = 2; i <= 9; i++) {
+    if (n === i) continue;
+    if (n % i === 0) {
+      return false;
+    }
+  }
+  return true;
 };
 
 /**
@@ -49,8 +73,13 @@ const isItPrime = n => {
 const createMatrix = (n, fill) => {
   if (n === undefined) throw new Error("n is required");
   if (fill === undefined) throw new Error("fill is required");
+  let matrixArray = [];
+  for (let i = 0; i < n; i++) {
+    matrixArray[i] = [];
+    for (let j = 0; j < n; j++) matrixArray[i][j] = fill;
+  }
+  return matrixArray;
 };
-
 /**
  * This function takes an array of staff objects in the format:
  * [
@@ -66,6 +95,14 @@ const createMatrix = (n, fill) => {
 const areWeCovered = (staff, day) => {
   if (staff === undefined) throw new Error("staff is required");
   if (day === undefined) throw new Error("day is required");
+
+  const staffRotas = staff.map((x) => x.rota);
+  const daysOccurance = staffRotas.filter((y) => y.find((z) => z === day))
+    .length;
+
+  if (daysOccurance < 3) return false;
+
+  return true;
 };
 
 module.exports = {
@@ -74,5 +111,5 @@ module.exports = {
   getComplementaryDNA,
   isItPrime,
   createMatrix,
-  areWeCovered
+  areWeCovered,
 };
